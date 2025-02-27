@@ -1,0 +1,85 @@
+ENVI
+description = {
+  Create New File Result [Wed Jan 22 10:38:29 2025]}
+samples = 368
+lines   = 150
+bands   = 48
+header offset = 0
+file type = ENVI Standard
+data type = 12
+interleave = bsq
+sensor type = Unknown
+byte order = 0
+x start = 4628
+y start = 3189
+map info = {UTM, 1.000, 1.000, 248313.500, 4434521.000, 5.0000000000e-001, 5.0000000000e-001, 34, North, WGS-84, units=Meters}
+coordinate system string = {PROJCS["UTM_Zone_34N",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",500000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",21.0],PARAMETER["Scale_Factor",0.9996],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0]]}
+default bands = {20,13,6}
+wavelength units = Nanometers
+pixel size = {5.00000000e-001, 5.00000000e-001, units=Meters}
+band names = {
+ Channel 1 381.281nm +/- 7.147nm (sc)  (rows:283-288) 1, 
+ Channel 2 395.574nm +/- 7.145nm (sc)  (rows:277-282) 2, 
+ Channel 3 409.862nm +/- 7.142nm (sc)  (rows:271-276) 3, 
+ Channel 4 424.143nm +/- 7.139nm (sc)  (rows:265-270) 4, 
+ Channel 5 438.419nm +/- 7.137nm (sc)  (rows:259-264) 5, 
+ Channel 6 452.689nm +/- 7.134nm (sc)  (rows:253-258) 6, 
+ Channel 7 466.954nm +/- 7.131nm (sc)  (rows:247-252) 7, 
+ Channel 8 481.215nm +/- 7.129nm (sc)  (rows:241-246) 8, 
+ Channel 9 495.470nm +/- 7.127nm (sc)  (rows:235-240) 9, 
+ Channel 10 509.722nm +/- 7.125nm (sc)  (rows:229-234) 10, 
+ Channel 11 523.969nm +/- 7.123nm (sc)  (rows:223-228) 11, 
+ Channel 12 538.212nm +/- 7.121nm (sc)  (rows:217-222) 12, 
+ Channel 13 552.452nm +/- 7.119nm (sc)  (rows:211-216) 13, 
+ Channel 14 566.688nm +/- 7.117nm (sc)  (rows:205-210) 14, 
+ Channel 15 580.921nm +/- 7.116nm (sc)  (rows:199-204) 15, 
+ Channel 16 595.152nm +/- 7.115nm (sc)  (rows:193-198) 16, 
+ Channel 17 609.379nm +/- 7.113nm (sc)  (rows:187-192) 17, 
+ Channel 18 623.605nm +/- 7.112nm (sc)  (rows:181-186) 18, 
+ Channel 19 637.828nm +/- 7.111nm (sc)  (rows:175-180) 19, 
+ Channel 20 652.049nm +/- 7.110nm (sc)  (rows:169-174) 20, 
+ Channel 21 666.269nm +/- 7.110nm (sc)  (rows:163-168) 21, 
+ Channel 22 680.487nm +/- 7.109nm (sc)  (rows:157-162) 22, 
+ Channel 23 694.705nm +/- 7.108nm (sc)  (rows:151-156) 23, 
+ Channel 24 708.921nm +/- 7.108nm (sc)  (rows:145-150) 24, 
+ Channel 25 723.137nm +/- 7.108nm (sc)  (rows:139-144) 25, 
+ Channel 26 737.353nm +/- 7.108nm (sc)  (rows:133-138) 26, 
+ Channel 27 751.568nm +/- 7.108nm (sc)  (rows:127-132) 27, 
+ Channel 28 765.784nm +/- 7.108nm (sc)  (rows:121-126) 28, 
+ Channel 29 780.000nm +/- 7.108nm (sc)  (rows:115-120) 29, 
+ Channel 30 794.217nm +/- 7.109nm (sc)  (rows:109-114) 30, 
+ Channel 31 808.435nm +/- 7.109nm (sc)  (rows:103-108) 31, 
+ Channel 32 822.654nm +/- 7.110nm (sc)  (rows:97-102) 32, 
+ Channel 33 836.874nm +/- 7.111nm (sc)  (rows:91-96) 33, 
+ Channel 34 851.096nm +/- 7.112nm (sc)  (rows:85-90) 34, 
+ Channel 35 865.321nm +/- 7.113nm (sc)  (rows:79-84) 35, 
+ Channel 36 879.547nm +/- 7.114nm (sc)  (rows:73-78) 36, 
+ Channel 37 893.776nm +/- 7.115nm (sc)  (rows:67-72) 37, 
+ Channel 38 908.007nm +/- 7.116nm (sc)  (rows:61-66) 38, 
+ Channel 39 922.242nm +/- 7.118nm (sc)  (rows:55-60) 39, 
+ Channel 40 936.479nm +/- 7.120nm (sc)  (rows:49-54) 40, 
+ Channel 41 950.720nm +/- 7.122nm (sc)  (rows:43-48) 41, 
+ Channel 42 964.965nm +/- 7.123nm (sc)  (rows:37-42) 42, 
+ Channel 43 979.214nm +/- 7.125nm (sc)  (rows:31-36) 43, 
+ Channel 44 993.467nm +/- 7.128nm (sc)  (rows:25-30) 44, 
+ Channel 45 1007.725nm +/- 7.130nm (sc)  (rows:19-24) 45, 
+ Channel 46 1021.987nm +/- 7.132nm (sc)  (rows:13-18) 46, 
+ Channel 47 1036.255nm +/- 7.135nm (sc)  (rows:7-12) 47, 
+ Channel 48 1050.527nm +/- 7.136nm (sc)  (rows:1-6) 48 }
+wavelength = {
+  381.299988,  395.600006,  409.899994,  424.100006,  438.399994,  452.700012,
+  467.000000,  481.200012,  495.500000,  509.700012,  524.000000,  538.200012,
+  552.500000,  566.700012,  580.900024,  595.200012,  609.400024,  623.599976,
+  637.799988,  652.000000,  666.299988,  680.500000,  694.700012,  708.900024,
+  723.099976,  737.400024,  751.599976,  765.799988,  780.000000,  794.200012,
+  808.400024,  822.700012,  836.900024,  851.099976,  865.299988,  879.500000,
+  893.799988,  908.000000,  922.200012,  936.500000,  950.700012,  965.000000,
+  979.200012,  993.500000, 1007.700012, 1022.000000, 1036.300049, 1050.500000}
+fwhm = {
+ 14.300000, 14.300000, 14.300000, 14.300000, 14.300000, 14.300000, 14.300000,
+ 14.300000, 14.300000, 14.300000, 14.200000, 14.200000, 14.200000, 14.200000,
+ 14.200000, 14.200000, 14.200000, 14.200000, 14.200000, 14.200000, 14.200000,
+ 14.200000, 14.200000, 14.200000, 14.200000, 14.200000, 14.200000, 14.200000,
+ 14.200000, 14.200000, 14.200000, 14.200000, 14.200000, 14.200000, 14.200000,
+ 14.200000, 14.200000, 14.200000, 14.200000, 14.200000, 14.200000, 14.200000,
+ 14.300000, 14.300000, 14.300000, 14.300000, 14.300000, 14.300000}
