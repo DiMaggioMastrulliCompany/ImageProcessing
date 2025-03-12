@@ -146,7 +146,7 @@ try
     end
 
     % Store the image in a variable
-    ulivo_campo = img;
+    % ulivo_campo = img;
     fprintf('Image stored in variable ulivo_campo\n');
 catch e
     fprintf('Error reading image file: %s\n', e.message);
