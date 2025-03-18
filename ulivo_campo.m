@@ -1,153 +1,117 @@
-% filepath: /c:/Users/Valerio/Mega/Uni/Image Processing - Computer Vision I/ImageProcessing/ulivo2.m
-% Read ulivo_campo.hdr and ulivo_campo.img file
-fprintf('Reading ulivo_campo image files...\n');
+% Percorso del file immagine .img
+filepath = 'ulivo_campo.img';
 
-% Define filenames
-filename = 'ulivo_campo';
-hdrFile = [filename '.hdr'];
-imgFile = [filename '.img'];
+% Leggi le informazioni dall'header
+info = enviinfo('ulivo_campo.hdr');
 
-% Read the header file to extract necessary information
-fileID = fopen(hdrFile, 'r');
-if fileID == -1
-    error('Cannot open the header file. Make sure it exists in the current directory.');
+% Leggi l'immagine
+data = multibandread(filepath, [info.Height, info.Width, info.Bands], info.DataType, info.HeaderOffset, info.Interleave, info.ByteOrder);
+
+% Visualizza un'immagine RGB usando le bande predefinite
+default_bands = info.DefaultBands;  % Queste sono le bande [20, 13, 6] come indicato nell'header
+
+% Crea immagine RGB
+rgb = zeros(info.Height, info.Width, 3);
+for i = 1:3
+    rgb(:,:,i) = data(:,:,default_bands(i));
 end
 
-% Initialize variables
-samples = 0;
-lines = 0;
-bands = 0;
-dataType = '';
-interleave = '';
-byteOrder = '';
+% Normalizza per la visualizzazione
+rgb_norm = rgb / max(rgb(:));
 
-% Parse the header file
-tline = fgetl(fileID);
-while ischar(tline)
-    % Improved parsing logic
-    if contains(lower(tline), 'samples')
-        % Extract everything after the equals sign and convert to number
-        eq_pos = strfind(tline, '=');
-        if ~isempty(eq_pos)
-            samples = str2double(strtrim(tline(eq_pos(1)+1:end)));
-        end
-    elseif contains(lower(tline), 'lines')
-        eq_pos = strfind(tline, '=');
-        if ~isempty(eq_pos)
-            lines = str2double(strtrim(tline(eq_pos(1)+1:end)));
-        end
-    elseif contains(lower(tline), 'bands') && ~contains(lower(tline), 'default bands')
-        eq_pos = strfind(tline, '=');
-        if ~isempty(eq_pos)
-            bands = str2double(strtrim(tline(eq_pos(1)+1:end)));
-        end
-    elseif contains(lower(tline), 'data type')
-        eq_pos = strfind(tline, '=');
-        if ~isempty(eq_pos)
-            dataType = strtrim(tline(eq_pos(1)+1:end));
-        end
-    elseif contains(lower(tline), 'interleave')
-        eq_pos = strfind(tline, '=');
-        if ~isempty(eq_pos)
-            interleave = lower(strtrim(tline(eq_pos(1)+1:end)));
-        end
-    elseif contains(lower(tline), 'byte order')
-        eq_pos = strfind(tline, '=');
-        if ~isempty(eq_pos)
-            byteOrder = strtrim(tline(eq_pos(1)+1:end));
-        end
-    end
-    tline = fgetl(fileID);
+% Visualizza l'immagine
+figure;
+imshow(rgb_norm);
+title('Campo di ulivi - Immagine iperspettrale');
+
+% Estrai le bande utili per la segmentazione basata su vegetazione
+% Identifichiamo le bande più vicine a quelle dell'esempio precedente
+wavelengths = info.Wavelength;
+
+% Trova gli indici delle bande più vicine a:
+% - Rosso (~650-670 nm)
+% - NIR (~800-850 nm)
+% - Red Edge (~720-740 nm)
+[~, red_idx] = min(abs(wavelengths - 660));
+[~, nir_idx] = min(abs(wavelengths - 830));
+[~, red_edge_idx] = min(abs(wavelengths - 730));
+
+% Estrai le bande
+red = double(data(:,:,red_idx));
+nir = double(data(:,:,nir_idx));
+red_edge = double(data(:,:,red_edge_idx));
+
+% Visualizza un'immagine RGB usando le bande predefinite
+default_bands = info.DefaultBands;  % [20, 13, 6]
+
+% Crea immagine RGB per visualizzazione
+rgb = zeros(info.Height, info.Width, 3);
+for i = 1:3
+    rgb(:,:,i) = data(:,:,default_bands(i));
 end
-fclose(fileID);
+rgb_norm = rgb / max(rgb(:));
 
-% Report what we found in the header
-fprintf('Header information:\n');
-fprintf('  - Samples: %d\n', samples);
-fprintf('  - Lines: %d\n', lines);
-fprintf('  - Bands: %d\n', bands);
-fprintf('  - Data Type: %s\n', dataType);
-fprintf('  - Interleave: %s\n', interleave);
-fprintf('  - Byte Order: %s\n', byteOrder);
+% Calcola gli indici di vegetazione
+% NDVI (Normalized Difference Vegetation Index)
+ndvi = (nir - red) ./ (nir + red);
 
-% Check if we have all necessary information
-if samples == 0 || lines == 0 || bands == 0
-    error('Could not extract all necessary information from header file.');
+% NDRE (Normalized Difference Red Edge)
+ndre = (nir - red_edge) ./ (nir + red_edge);
+
+% Combina gli indici per una migliore segmentazione
+% Potrebbe essere necessario regolare le soglie in base all'immagine
+vegetation_mask = (ndvi > 0.3) & (ndre > 0.2);
+
+% Applica operazioni morfologiche per migliorare la maschera
+se_small_1 = strel('disk', 3);
+vegetation_mask_1 = imopen(vegetation_mask, se_small_1);
+vegetation_mask_1 = imclose(vegetation_mask_1, se_small_1);
+
+se_small_2 = strel('disk', 7);
+vegetation_mask_2 = imopen(vegetation_mask_1, se_small_2);
+vegetation_mask_2 = imclose(vegetation_mask_2, se_small_2);
+
+% Rilevazione specifica delle chiome
+se_small_3 = strel('disk', 15);
+vegetation_mask_3 = imopen(vegetation_mask_2, se_small_3);
+vegetation_mask_3 = imclose(vegetation_mask_3, se_small_3);
+
+se_small_4 = strel('disk', 25);
+vegetation_mask_4 = imopen(vegetation_mask_3, se_small_4);
+
+% Etichetta le componenti connesse (chiome degli alberi)
+[labeled_trees, ~] = bwlabel(vegetation_mask_4);
+
+% Filtra gli oggetti piccoli (rumore)
+min_tree_size = 10000; % Regola in base alla risoluzione dell'immagine
+labeled_trees = bwareafilt(logical(labeled_trees), [min_tree_size inf]);
+
+% Visualizza i risultati
+figure;
+subplot(2,3,1);
+imshow(rgb_norm); title('RGB Image');
+subplot(2,3,2);
+imshow(vegetation_mask, []); title('vegetation\_mask');
+subplot(2,3,3);
+imshow(vegetation_mask_1, []); title('vegetation\_mask\_1');
+subplot(2,3,4);
+imshow(vegetation_mask_2, []); title('vegetation\_mask\_2');
+subplot(2,3,5);
+imshow(vegetation_mask_3, []); title('vegetation\_mask\_3');
+subplot(2,3,6);
+imshow(labeled_trees, []); title('Segmented Crowns');
+
+% Calcola le proprietà degli alberi rilevati
+tree_stats = regionprops(labeled_trees, 'Area', 'Centroid', 'BoundingBox');
+fprintf('Numero di alberi di ulivo rilevati: %d\n', length(tree_stats));
+
+% Visualizza i centroidi degli alberi sull'immagine RGB
+figure;
+imshow(rgb_norm);
+hold on;
+for i = 1:length(tree_stats)
+    centroid = tree_stats(i).Centroid;
+    plot(centroid(1), centroid(2), 'r+', 'MarkerSize', 10, 'LineWidth', 2);
 end
-
-% Map ENVI data types to MATLAB data types
-if isempty(dataType)
-    precision = 'uint8';
-    fprintf('Data type not specified, defaulting to uint8\n');
-else
-    switch dataType
-        case '1'
-            precision = 'uint8';
-        case '2'
-            precision = 'int16';
-        case '3'
-            precision = 'int32';
-        case '4'
-            precision = 'single';
-        case '5'
-            precision = 'double';
-        case '12'
-            precision = 'uint16';
-        case '13'
-            precision = 'uint32';
-        otherwise
-            precision = 'uint8';
-            fprintf('Unsupported data type %s, defaulting to uint8\n', dataType);
-    end
-end
-
-% Default to BSQ if interleave is not specified
-if isempty(interleave)
-    interleave = 'bsq';
-    fprintf('Interleave not specified, defaulting to BSQ\n');
-end
-
-% Default to little-endian if byte order is not specified
-if isempty(byteOrder)
-    byteOrder = 'ieee-le';
-    fprintf('Byte order not specified, defaulting to little-endian\n');
-else
-    if strcmp(byteOrder, '0')
-        byteOrder = 'ieee-le'; % little-endian
-    else
-        byteOrder = 'ieee-be'; % big-endian
-    end
-end
-
-% Read the image data
-try
-    fprintf('Reading image data...\n');
-    img = multibandread(imgFile, [lines, samples, bands], precision, 0, interleave, byteOrder);
-    fprintf('Image read successfully.\n');
-
-    % Display the first band
-    figure;
-    imagesc(img(:,:,1));
-    colormap gray;
-    title('First band of ulivo\_campo image');
-    colorbar;
-
-    % If it's an RGB image (3 or more bands), show as color composite
-    if bands >= 3
-        figure;
-        % Create RGB composite using first three bands
-        rgbImg = zeros(lines, samples, 3);
-        for i = 1:3
-            band = img(:,:,i);
-            rgbImg(:,:,i) = (band - min(band(:))) / (max(band(:)) - min(band(:)));
-        end
-        imshow(rgbImg);
-        title('RGB composite using first three bands');
-    end
-
-    % Store the image in a variable
-    % ulivo_campo = img;
-    fprintf('Image stored in variable ulivo_campo\n');
-catch e
-    fprintf('Error reading image file: %s\n', e.message);
-end
+title('Alberi di ulivo identificati');
+hold off;
