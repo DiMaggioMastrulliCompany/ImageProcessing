@@ -19,11 +19,6 @@ end
 % Normalizza per la visualizzazione
 rgb_norm = rgb / max(rgb(:));
 
-% Visualizza l'immagine
-figure;
-imshow(rgb_norm);
-title('Campo di ulivi - Immagine iperspettrale');
-
 % Estrai le bande utili per la segmentazione basata su vegetazione
 % Identifichiamo le bande più vicine a quelle dell'esempio precedente
 wavelengths = info.Wavelength;
@@ -60,30 +55,30 @@ ndre = (nir - red_edge) ./ (nir + red_edge);
 
 % Combina gli indici per una migliore segmentazione
 % Potrebbe essere necessario regolare le soglie in base all'immagine
-vegetation_mask = (ndvi > 0.3) & (ndre > 0.2);
+vegetation_mask = (ndvi > 0.2) & (ndre > 0.15);
 
 % Applica operazioni morfologiche per migliorare la maschera
-se_small_1 = strel('disk', 3);
+se_small_1 = strel('disk', 1);
 vegetation_mask_1 = imopen(vegetation_mask, se_small_1);
 vegetation_mask_1 = imclose(vegetation_mask_1, se_small_1);
 
-se_small_2 = strel('disk', 7);
-vegetation_mask_2 = imopen(vegetation_mask_1, se_small_2);
-vegetation_mask_2 = imclose(vegetation_mask_2, se_small_2);
+% se_small_2 = strel('disk', 2);
+% vegetation_mask_2 = imopen(vegetation_mask_1, se_small_2);
+% vegetation_mask_2 = imclose(vegetation_mask_2, se_small_2);
 
-% Rilevazione specifica delle chiome
-se_small_3 = strel('disk', 15);
-vegetation_mask_3 = imopen(vegetation_mask_2, se_small_3);
-vegetation_mask_3 = imclose(vegetation_mask_3, se_small_3);
+% % Rilevazione specifica delle chiome
+% se_small_3 = strel('disk', 8);
+% vegetation_mask_3 = imopen(vegetation_mask_2, se_small_3);
+% vegetation_mask_3 = imclose(vegetation_mask_3, se_small_3);
 
-se_small_4 = strel('disk', 25);
-vegetation_mask_4 = imopen(vegetation_mask_3, se_small_4);
+% se_small_4 = strel('disk', 12);
+% vegetation_mask_4 = imopen(vegetation_mask_3, se_small_4);
 
 % Etichetta le componenti connesse (chiome degli alberi)
-[labeled_trees, ~] = bwlabel(vegetation_mask_4);
+[labeled_trees, ~] = bwlabel(vegetation_mask_1);
 
 % Filtra gli oggetti piccoli (rumore)
-min_tree_size = 10000; % Regola in base alla risoluzione dell'immagine
+min_tree_size = 70; % Regola in base alla risoluzione dell'immagine
 labeled_trees = bwareafilt(logical(labeled_trees), [min_tree_size inf]);
 
 % Visualizza i risultati
