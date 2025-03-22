@@ -45,6 +45,8 @@ final_mask = imresize(final_mask, [orig_height orig_width], 'nearest');
 red = double(data(:,:,red_idx));
 green = double(data(:,:,green_idx));
 blue = double(data(:,:,blue_idx));
+nir = double(data(:,:,nir_idx));
+red_edge = double(data(:,:,red_edge_idx));
 
 % Cut off top and bottom 2% for each color channel
 red_limits = prctile(red(:), [2 98]);
@@ -72,4 +74,4 @@ imshow(overlay);
 title('Overlay maschera');
 
 % Calculate all indices and show figures
-calculate_vegetation_indices(labeled_trees, red, green, blue, nir, red_edge);
+calculate_vegetation_indices(final_mask, red, green, blue, nir, red_edge);

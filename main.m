@@ -38,4 +38,4 @@ imshow(overlay);
 title('Detected Trees Overlay');
 
 % Calculate all indices and show figures
-calculate_vegetation_indices(labeled_trees, red, green, blue, nir, red_edge);
+calculate_vegetation_indices(final_mask, red, green, blue, nir, red_edge);
