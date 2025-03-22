@@ -27,23 +27,26 @@ wavelengths = info.Wavelength;
 % - Rosso (~650-670 nm)
 % - NIR (~800-850 nm)
 % - Red Edge (~720-740 nm)
-[~, red_idx] = min(abs(wavelengths - 660));
-[~, green_idx] = min(abs(wavelengths - 550));
-[~, blue_idx] = min(abs(wavelengths - 470));
+[~, red_idx] = min(abs(wavelengths - 652));
+[~, green_idx] = min(abs(wavelengths - 552));
+[~, blue_idx] = min(abs(wavelengths - 452));
 [~, nir_idx] = min(abs(wavelengths - 830));
 [~, red_edge_idx] = min(abs(wavelengths - 730));
 
+fprintf('Bande selezionate per la segmentazione:\n');
+fprintf('Rosso: %.2f nm (banda %d)\n', wavelengths(red_idx), red_idx);
+fprintf('Verde: %.2f nm (banda %d)\n', wavelengths(green_idx), green_idx);
+fprintf('Blu: %.2f nm (banda %d)\n', wavelengths(blue_idx), blue_idx);
+fprintf('NIR: %.2f nm (banda %d)\n', wavelengths(nir_idx), nir_idx);
+fprintf('Red Edge: %.2f nm (banda %d)\n', wavelengths(red_edge_idx), red_edge_idx);
+
 % Estrai le bande
 red = double(data(:,:,red_idx));
-green = double(data(:,:,blue_idx));
-blue = double(data(:,:,green_idx));
+green = double(data(:,:,green_idx));
+blue = double(data(:,:,blue_idx));
 
 nir = double(data(:,:,nir_idx));
 red_edge = double(data(:,:,red_edge_idx));
-
-% Calcola gli indici di vegetazione
-% NDRE (Normalized Difference Red Edge)
-ndre = (nir - red_edge) ./ (nir + red_edge);
 
 rgb_normalized = cat(3, ...
     (red - min(red(:))) / (max(red(:)) - min(red(:))), ...
@@ -52,10 +55,9 @@ rgb_normalized = cat(3, ...
 hsv = rgb2hsv(rgb_normalized);
 saturation = hsv(:,:,2);
 
-
 % Combina gli indici per una migliore segmentazione
 % Potrebbe essere necessario regolare le soglie in base all'immagine
-vegetation_mask = (ndre > 0.15) & (saturation < 0.64);
+vegetation_mask = (indices.NDRE > 0.15) & (saturation < 0.64);
 
 vegetation_mask(end-10:end, :) = 0;
 
@@ -74,19 +76,40 @@ vegetation_mask_2 = imopen(vegetation_mask_1, se_small_2);
 min_tree_size = 45; % Regola in base alla risoluzione dell'immagine
 labeled_trees = bwareafilt(logical(labeled_trees), [min_tree_size inf]);
 
-% Visualizza i risultati
-figure;
-subplot(2,3,1);
-imshow(rgb_norm); title('RGB Image');
-subplot(2,3,2);
-imshow(vegetation_mask, []); title('vegetation\_mask');
-subplot(2,3,3);
-imshow(vegetation_mask_1, []); title('vegetation\_mask\_1');
-subplot(2,3,4);
-imshow(vegetation_mask_2, []); title('vegetation\_mask\_2');
-subplot(2,3,6);
-imshow(labeled_trees, []); title('Segmented Crowns');
+% Cut off top and bottom 2% for each color channel
+red_limits = prctile(red(:), [2 98]);
+green_limits = prctile(green(:), [2 98]);
+blue_limits = prctile(blue(:), [2 98]);
 
-% Calcola le proprietà degli alberi rilevati
-tree_stats = regionprops(labeled_trees, 'Area', 'Centroid', 'BoundingBox');
-fprintf('Numero di alberi di ulivo rilevati: %d\n', length(tree_stats));
+fprintf('Red limits: %.2f to %.2f\n', red_limits(1), red_limits(2));
+fprintf('Green limits: %.2f to %.2f\n', green_limits(1), green_limits(2));
+fprintf('Blue limits: %.2f to %.2f\n', blue_limits(1), blue_limits(2));
+
+% Clip values and normalize
+red_cut = (min(max(red, red_limits(1)), red_limits(2)) - red_limits(1)) / (red_limits(2) - red_limits(1));
+green_cut = (min(max(green, green_limits(1)), green_limits(2)) - green_limits(1)) / (green_limits(2) - green_limits(1));
+blue_cut = (min(max(blue, blue_limits(1)), blue_limits(2)) - blue_limits(1)) / (blue_limits(2) - blue_limits(1));
+
+rgb_cut = cat(3, red_cut, green_cut, blue_cut);
+
+% Figura separata per i passi di segmentazione
+figure('Name', 'Segmentation Process', 'WindowState', 'maximized');
+subplot(2,3,1); imshow(vegetation_mask, []); title('Initial Mask');
+subplot(2,3,2); imshow(vegetation_mask_1, []); title('After 1st Operation');
+subplot(2,3,3); imshow(vegetation_mask_2, []); title('After 2nd Operation');
+subplot(2,3,4); imshow(labeled_trees, []); title('Labeled Trees');
+
+% Crea overlay del risultato finale su RGB
+figure('Name', 'Final Result', 'WindowState', 'maximized');
+subplot(1,2,1);
+imshow(rgb_cut);
+title('Original Image');
+
+subplot(1,2,2);
+overlay = rgb_cut;
+mask = cat(3, labeled_trees, labeled_trees, labeled_trees);
+overlay(mask == 0) = overlay(mask == 0) * 0.3; % Darken non-tree areas
+imshow(overlay);
+title('Detected Trees Overlay');
+
+calculate_vegetation_indices(labeled_trees, red, green, blue, nir, red_edge);
