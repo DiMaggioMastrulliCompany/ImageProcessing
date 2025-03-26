@@ -7,18 +7,11 @@ info = enviinfo('ulivo_campo.hdr');
 % Leggi l'immagine
 data = multibandread(filepath, [info.Height, info.Width, info.Bands], info.DataType, info.HeaderOffset, info.Interleave, info.ByteOrder);
 
-wavelengths = info.Wavelength;
-
-% Trova gli indici delle bande più vicine a:
-% - Rosso (~650-670 nm)
-% - NIR (~800-850 nm)
-% - Red Edge (~720-740 nm)
-[~, red_idx] = min(abs(wavelengths - 652));
-[~, green_idx] = min(abs(wavelengths - 552));
-[~, blue_idx] = min(abs(wavelengths - 452));
-[~, nir_idx] = min(abs(wavelengths - 830));
-[~, red_edge_idx] = min(abs(wavelengths - 730));
-
+red_idx = 20; % Rosso
+green_idx = 13; % Verde
+blue_idx = 6; % Blu
+nir_idx = 33; % NIR
+red_edge_idx = 25; % Red Edge
 
 % Get original dimensions
 [orig_height, orig_width, num_bands] = size(data);
