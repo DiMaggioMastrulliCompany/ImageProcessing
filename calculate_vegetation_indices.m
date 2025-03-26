@@ -63,7 +63,7 @@ subplot(3,3,5); show_index_normalized(indices.NDRE, 'NDRE');
 subplot(3,3,6); show_index_normalized(indices.DVI, 'DVI');
 subplot(3,3,7); show_index_normalized(indices.MSAVI, 'MSAVI');
 subplot(3,3,8); show_index_normalized(indices.OSAVI, 'OSAVI');
-subplot(3,3,9); show_index_normalized(indices.TVI, 'TVI');
+subplot(3,3,9); show_index_normalized(indices.SR, 'SR');
 
 % Figure 2: Modified and Advanced Indices
 figure('Name', 'Modified and Advanced Indices', 'WindowState', 'maximized');
@@ -85,9 +85,6 @@ subplot(3,3,3); show_index_normalized(indices.GNDVI, 'GNDVI');
 subplot(3,3,4); show_index_normalized(indices.GRVI, 'GRVI');
 subplot(3,3,5); show_index_normalized(indices.IRVI, 'IRVI');
 subplot(3,3,6); show_index_normalized(indices.NGRDI, 'NGRDI');
-subplot(3,3,7); show_index_normalized(indices.SR, 'SR');
-
-
 
 end
 
