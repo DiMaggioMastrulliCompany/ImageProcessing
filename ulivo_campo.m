@@ -67,4 +67,4 @@ imshow(overlay);
 title('Overlay maschera');
 
 % Calculate all indices and show figures
-calculate_vegetation_indices(final_mask, red, green, blue, nir, red_edge);
+calculate_vegetation_indices(final_mask, red, green, blue, nir, red_edge, true);

@@ -1,4 +1,4 @@
-function [indices, means] = calculate_vegetation_indices(mask, red, green, blue, nir, red_edge)
+function [indices, means] = calculate_vegetation_indices(mask, red, green, blue, nir, red_edge, show_imgs)
 % Constants for indices
 L = 1.0;  % Standard soil adjustment for EVI
 G = 2.5;  % Gain factor (same as current)
@@ -52,40 +52,42 @@ for i = 1:length(field_names)
     fprintf('%s: %.4f\n', field_names{i}, means.(field_names{i}));
 end
 
-% Display results in multiple figures
-% Figure 1: Basic RGB and Primary Indices
-figure('Name', 'Primary Vegetation Indices', 'WindowState', 'maximized');
-subplot(3,3,1); imshow(cat(3, red./max(red(:)), green./max(green(:)), blue./max(blue(:)))); title('RGB Image');
-subplot(3,3,2); show_index_normalized(indices.NDVI, 'NDVI');
-subplot(3,3,3); show_index_normalized(indices.EVI, 'EVI');
-subplot(3,3,4); show_index_normalized(indices.SAVI, 'SAVI');
-subplot(3,3,5); show_index_normalized(indices.NDRE, 'NDRE');
-subplot(3,3,6); show_index_normalized(indices.DVI, 'DVI');
-subplot(3,3,7); show_index_normalized(indices.MSAVI, 'MSAVI');
-subplot(3,3,8); show_index_normalized(indices.OSAVI, 'OSAVI');
-subplot(3,3,9); show_index_normalized(indices.SR, 'SR');
+if show_imgs
+    % Display results in multiple figures
+    % Figure 1: Basic RGB and Primary Indices
+    figure('Name', 'Primary Vegetation Indices', 'WindowState', 'maximized');
+    subplot(3,3,1); imshow(cat(3, red./max(red(:)), green./max(green(:)), blue./max(blue(:)))); title('RGB Image');
+    subplot(3,3,2); show_index_normalized(indices.NDVI, 'NDVI');
+    subplot(3,3,3); show_index_normalized(indices.EVI, 'EVI');
+    subplot(3,3,4); show_index_normalized(indices.SAVI, 'SAVI');
+    subplot(3,3,5); show_index_normalized(indices.NDRE, 'NDRE');
+    subplot(3,3,6); show_index_normalized(indices.DVI, 'DVI');
+    subplot(3,3,7); show_index_normalized(indices.MSAVI, 'MSAVI');
+    subplot(3,3,8); show_index_normalized(indices.OSAVI, 'OSAVI');
+    subplot(3,3,9); show_index_normalized(indices.SR, 'SR');
 
-% Figure 2: Modified and Advanced Indices
-figure('Name', 'Modified and Advanced Indices', 'WindowState', 'maximized');
-subplot(3,3,1); show_index_normalized(indices.MCARI1, 'MCARI1');
-subplot(3,3,2); show_index_normalized(indices.MCARI2, 'MCARI2');
-subplot(3,3,3); show_index_normalized(indices.MSR, 'MSR');
-subplot(3,3,4); show_index_normalized(indices.MTVI1, 'MTVI1');
-subplot(3,3,5); show_index_normalized(indices.MTVI2, 'MTVI2');
-subplot(3,3,6); show_index_normalized(indices.RDVI, 'RDVI');
-subplot(3,3,7); show_index_normalized(indices.TVI, 'TVI');
-subplot(3,3,8); show_index_normalized(indices.VREI, 'VREI');
-subplot(3,3,9); show_index_normalized(indices.NRVI, 'NRVI');
+    % Figure 2: Modified and Advanced Indices
+    figure('Name', 'Modified and Advanced Indices', 'WindowState', 'maximized');
+    subplot(3,3,1); show_index_normalized(indices.MCARI1, 'MCARI1');
+    subplot(3,3,2); show_index_normalized(indices.MCARI2, 'MCARI2');
+    subplot(3,3,3); show_index_normalized(indices.MSR, 'MSR');
+    subplot(3,3,4); show_index_normalized(indices.MTVI1, 'MTVI1');
+    subplot(3,3,5); show_index_normalized(indices.MTVI2, 'MTVI2');
+    subplot(3,3,6); show_index_normalized(indices.RDVI, 'RDVI');
+    subplot(3,3,7); show_index_normalized(indices.TVI, 'TVI');
+    subplot(3,3,8); show_index_normalized(indices.VREI, 'VREI');
+    subplot(3,3,9); show_index_normalized(indices.NRVI, 'NRVI');
 
-% Figure 3: Color-based and Ratio Indices
-figure('Name', 'Color-based and Ratio Indices', 'WindowState', 'maximized');
-subplot(3,3,1); show_index_normalized(indices.BNDVI, 'BNDVI');
-subplot(3,3,2); show_index_normalized(indices.GI, 'GI');
-subplot(3,3,3); show_index_normalized(indices.GNDVI, 'GNDVI');
-subplot(3,3,4); show_index_normalized(indices.GRVI, 'GRVI');
-subplot(3,3,5); show_index_normalized(indices.IRVI, 'IRVI');
-subplot(3,3,6); show_index_normalized(indices.NGRDI, 'NGRDI');
+    % Figure 3: Color-based and Ratio Indices
+    figure('Name', 'Color-based and Ratio Indices', 'WindowState', 'maximized');
+    subplot(3,3,1); show_index_normalized(indices.BNDVI, 'BNDVI');
+    subplot(3,3,2); show_index_normalized(indices.GI, 'GI');
+    subplot(3,3,3); show_index_normalized(indices.GNDVI, 'GNDVI');
+    subplot(3,3,4); show_index_normalized(indices.GRVI, 'GRVI');
+    subplot(3,3,5); show_index_normalized(indices.IRVI, 'IRVI');
+    subplot(3,3,6); show_index_normalized(indices.NGRDI, 'NGRDI');
 
+end
 end
 
 function show_index_normalized(index_image, title_text)
